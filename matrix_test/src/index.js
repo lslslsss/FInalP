@@ -1,12 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Cell } from "./cell";
+import{ HeatMap } from "./heatmap";
 import { csv, min, max, median, interpolateGnBu, interpolateRdBu, mean } from "d3";
 import { Scales } from "./scale";
 import { Legend } from "./legend";
+import{ Tooltip } from "./tooltip";
 
+const csvUrl = 'https://raw.githubusercontent.com/lslslsss/FInalP/master/matrix.csv'
 
-const csvUrl = '/Users/lslsls/Desktop/IV/FInalP/matrix.csv'
 
 function useData(csvPath){
     const [dataAll, setData] = React.useState(null);
@@ -23,7 +25,8 @@ function useData(csvPath){
                 // d.valence = +d.valence_mean;
                 // d.tempo = +d.tempo_mean;
                 // d.instrumentalness = +d.instrumentalness_mean
-                d.value = +d.value
+                d.value = +d.Value
+                d.variable = d.variable.replace("_mean", '')
             });
             setData(data);
         });
@@ -32,53 +35,37 @@ function useData(csvPath){
 }
 
 
-function removeDuplicatembti(data){
-    const temp = data.map(d => d.MBTI);
-    return temp.filter( (d, idx) =>  temp.indexOf(d) === idx);
-};
 
-function HeatMap(){
-    const WIDTH = 900;
-    const HEIGHT = 400;
-    const margin = {top: 200, right: 40, bottom: 50, left: 60};
-    const height = HEIGHT - margin.top - margin.bottom;
-    const width = WIDTH - margin.left - margin.right;
+
+function Main(){
+    const [selectPoint, setSelectPoint] = React.useState(null);
+    const WIDTH = 1200;
+    const HEIGHT = 800;
+    const margin = {top:120, right: 40, bottom: 50, left: 60, gap:40}; 
+    const innerWidth = WIDTH - margin.left - margin.right;
+    const innerHeight = HEIGHT - margin.top - margin.bottom;   
     const data = useData(csvUrl);
     if(!data){
         return <pre>Loading...</pre>
     }
     // console.log(data);
-
-    const MUSICAL = ["mode","danceability","energy","loudness","speechiness","acousticness","liveness","valence","tempo","instrumentalness"];
-    const MBTI = removeDuplicatembti(data)
-    // console.log(STATION);
-    const xScale = Scales.band(MUSICAL, 0, width);
-    const yScale = Scales.band(MBTI, 0, height);
-    const startRange = [min(d => {d.value}),median(d => {d.value}),max(d => {d.value})];
-    const colorRange = [interpolateGnBu(0), interpolateGnBu(0.5), interpolateGnBu(0.8)];
-    // const colormap = Scales.colormapLiner(startRange, colorRange);
-    // const colormap = Scales.colorSequential(startRange, interpolateGnBu);
-    const colormap = Scales.colorDiverging(startRange, interpolateRdBu);
-    return <svg width={WIDTH} height={HEIGHT}>
-        <g transform={`translate(${margin.left}, ${margin.top})`}>
-        {
-            data.map( d => {
-                return <Cell key={d.mbti+d.variable} d={d} xScale={xScale} yScale={yScale} color={colormap(d.value)} />
-            } )
+    const mbtiData = data.filter( d=> {
+        if (selectPoint){
+            return selectPoint.includes(d.mbti)
         }
-        {STATION.map(s => {
-                        return <g key={s} transform={`translate(${xScale(s)+5},-8)rotate(60)`}>
-                        <text style={{textAnchor:'end'}}>{s}</text>
-                        </g>
-                    })}
-        {MONTH.map(m => {
-                    return <text key={m} style={{textAnchor:'middle'}} x={-30} y={yScale(m)+10}>{m}</text>
-                })}
-        <Legend x={0} y={height+10} width={width/2} height={20} numberOfTicks={5} 
-        rangeOfValues={[min(data, d => d.start), max(data, d => d.start)]} colormap={colormap}/>
+    });
+    return <svg width={WIDTH} height={HEIGHT}>
+        <g>
+        <HeatMap WIDTH = {WIDTH/2} HEIGHT = {HEIGHT} margin={margin} data={data} selectPoint={selectPoint} setSelectPoint={setSelectPoint}>
+        </HeatMap>
+
+        <Tooltip d={selectPoint} mbti={mbtiData} setSelectPoint={setSelectPoint}
+        left={margin.left + innerWidth/2} top={margin.top+40+innerHeight/2} height={(innerHeight-margin.gap)/2} width={(innerWidth-margin.gap)/2}>
+
+        </Tooltip>
         </g>
         
     </svg>
 };
 
-ReactDOM.render(<HeatMap/>, document.getElementById('root'));
+ReactDOM.render(<Main/>, document.getElementById('root'));

@@ -1,7 +1,7 @@
 import React from "react";
 
-export function Cell(props){
-    const { d, xScale, yScale, color, selectPoint, setSelectPoint } = props;
+export function Axes(props){
+    const { s, xScale, yScale, color, selectPoint, setSelectPoint } = props;
 
     const mouseOver = (d) => {
         setSelectPoint(d.mbti + d.variable);

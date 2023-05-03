@@ -4,15 +4,17 @@ import { scaleLinear } from 'd3';
 export function Legend(props) {
     const {x, y, width, height, numberOfTicks, rangeOfValues, colormap} = props; 
     console.log(rangeOfValues);
+
     const [start, end] = rangeOfValues;
     const xScale = scaleLinear().range([x, x+width]).domain(rangeOfValues).nice();
     const ticks = xScale.ticks(numberOfTicks);
+    console.log(ticks);
     return <g>
         <defs>
-            <linearGradient id={"gradient"} x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id={"gradient"} x1= "0%" y1="0%" x2="100%" y2="0%">
                 {
                     ticks.map( tick => {
-                        return <stop key={`${tick}stop`} offset={`${100*tick/(end-start)}%`} 
+                        return <stop key={`${tick}stop`} offset={`${100*(tick+0.8)/1.8}%`} 
                         stopColor={colormap(tick)}/>
                     })
                 }
