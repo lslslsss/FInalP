@@ -59,7 +59,7 @@ function Main(){
         <HeatMap WIDTH = {WIDTH/2} HEIGHT = {HEIGHT} margin={margin} data={data} selectPoint={selectPoint} setSelectPoint={setSelectPoint}>
         </HeatMap>
 
-        <Tooltip d={selectPoint} mbti={mbtiData} setSelectPoint={setSelectPoint}
+        <Tooltip d={selectPoint} mbti={mbtiData} all={data} setSelectPoint={setSelectPoint}
         left={margin.left + innerWidth/2} top={margin.top+40+innerHeight/2} height={(innerHeight-margin.gap)/2} width={(innerWidth-margin.gap)/2}>
 
         </Tooltip>

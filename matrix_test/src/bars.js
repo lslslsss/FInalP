@@ -20,10 +20,20 @@ export function Bars(props){
     }
     return <g>
                 {data.map(d => {
-            return <rect key={"bar" + d.mbti + d.variable} x={xScale(d.variable)} y={yScale(d.value)} 
-            width={xScale.bandwidth()} height={height - yScale(d.value)} 
+                    if (yScale(d.value) >= 0) {
+                        return <rect key={"bar" + d.mbti + d.variable} x={xScale(d.variable)} y={height-yScale(d.value)} 
+            width={xScale.bandwidth()} height={yScale(d.value)} 
             onMouseOver={()=>{mouseOver(d)}} onMouseOut={mouseOut}
             fill={getColor(d)} stroke={'black'} />
+                    }
+                    else {
+                        return <rect key={"bar" + d.mbti + d.variable} x={xScale(d.variable)} y={height} 
+            width={xScale.bandwidth()} height={-yScale(d.value)} 
+            onMouseOver={()=>{mouseOver(d)}} onMouseOut={mouseOut}
+            fill={getColor(d)} stroke={'black'} />
+                    }
+
         })} 
+
     </g>
 }

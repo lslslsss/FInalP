@@ -24,8 +24,15 @@ export function Cell(props){
         
     }
 
+    const getWidth = (d) => {
+        if (selectPoint) {
+            return selectPoint.includes(d.mbti) | selectPoint.includes(d.variable) ? 2:1
+        }
+        
+    }
+
     return <g transform={`translate(${xScale(d.variable)}, ${yScale(d.mbti)})`}>
-        <rect width={xScale.bandwidth()} height={yScale.bandwidth()} fill={color} opacity={getOpacity(d)} stroke={"black"}
+        <rect width={xScale.bandwidth()} height={yScale.bandwidth()} fill={color} opacity={getOpacity(d)} stroke={"black"} strokeWidth={getWidth(d)}
         onMouseOver={()=>{mouseOver(d)}} onMouseOut={mouseOut}/>
     </g>
 }
